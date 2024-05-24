@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import './css/Style.css';
 import HumedadChart from './components/HumedadChart';
 import TemperaturaChart from './components/TemperaturaChart';
+import HumedadTierra from './components/HumedadTierra'; 
 
 function App() {
   const [data, setData] = useState({ humedad: [], mediana: [], timestamp: [], ultimas_temperaturas: [] });
@@ -16,15 +18,14 @@ function App() {
         return response.json();
       })
       .then(newData => {
-        // Leer los datos almacenados en localStorage
+        //Lee los datos almacenados en localStorage
         const storedData = JSON.parse(localStorage.getItem('data')) || {
           humedad: [],
           mediana: [],
           timestamp: [],
           ultimas_temperaturas: [],
         };
-
-        // Actualizar los datos almacenados
+        //Actualiza los datos almacenados
         const updatedData = {
           humedad: [...storedData.humedad, newData.humedad],
           mediana: [...storedData.mediana, newData.mediana],
@@ -32,10 +33,10 @@ function App() {
           ultimas_temperaturas: [...storedData.ultimas_temperaturas, ...newData.ultimas_temperaturas],
         };
 
-        // Guardar los datos actualizados en localStorage
+        //Guarda los datos actualizados en localStorage
         localStorage.setItem('data', JSON.stringify(updatedData));
 
-        // Actualizar el estado con los datos actualizados
+        // Actualiza el estado con los datos actualizados
         setData(updatedData);
       })
       .catch(error => {
@@ -44,33 +45,33 @@ function App() {
   };
 
   useEffect(() => {
-    // Leer los datos almacenados en localStorage al cargar la aplicación
-    const storedData = JSON.parse(localStorage.getItem('data')) || {
-      humedad: [],
-      mediana: [],
-      timestamp: [],
-      ultimas_temperaturas: [],
-    };
-    setData(storedData);
+        // Lee los datos almacenados en localStorage al cargar la aplicación
+        const storedData = JSON.parse(localStorage.getItem('data')) || {
+          humedad: [],
+          mediana: [],
+          timestamp: [],
+          ultimas_temperaturas: [],
+        };
+        setData(storedData);
+        //Realiza la primera conexión a la API para obtener los datos de temperatura.
+        fetchData();
 
-    // Realiza la primera conexión a la API para obtener los datos de temperatura
-    fetchData();
+        //Configura un intervalo para realizar la solicitud cada minuto
+        const interval = setInterval(() => {
+          fetchData();
+        }, 60000); // 60000 milisegundos = 1 minuto
 
-    // Configura un intervalo para realizar la solicitud cada minuto
-    const interval = setInterval(() => {
-      fetchData();
-    }, 60000); // 60000 milisegundos = 1 minuto
+        return () => clearInterval(interval);
+      }, []);
 
-    // Limpia el intervalo al desmontar el componente
-    return () => clearInterval(interval);
-  }, []);
+  const navigate = useNavigate();
 
   return (
     <div className="App">
       <header className="App-header">
         <h1>Jardinería</h1>
         <div className="button-container">
-          <button onClick={() => alert('Botón 1 presionado')}>Botón 1</button>
+          <button onClick={() => navigate('/humedadtierra')}>Botón 1</button>
           <button onClick={() => alert('Botón 2 presionado')}>Botón 2</button>
           <button onClick={() => alert('Botón 3 presionado')}>Botón 3</button>
           <button onClick={() => alert('Botón 4 presionado')}>Botón 4</button>
@@ -97,6 +98,18 @@ function App() {
   );
 }
 
-export default App;
+function AppWrapper() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/humedadtierra" element={<HumedadTierra />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default AppWrapper;
+
 
 //IP servidor 192.168.140.170:5000 , es una API y el código de la API
