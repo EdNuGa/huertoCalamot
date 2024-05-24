@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-route
 import './css/Style.css';
 import HumedadChart from './components/HumedadChart';
 import TemperaturaChart from './components/TemperaturaChart';
-import HumedadTierra from './components/HumedadTierra'; 
+import HumedadTierra from './components/HumedadTierraChart'; 
 
 function App() {
   const [data, setData] = useState({ humedad: [], mediana: [], timestamp: [], ultimas_temperaturas: [] });
@@ -67,11 +67,11 @@ function App() {
   const navigate = useNavigate();
 
   return (
-    <div className="App">
+    <div className="App">   
       <header className="App-header">
         <h1>Jardinería</h1>
         <div className="button-container">
-          <button onClick={() => navigate('/humedadtierra')}>Botón 1</button>
+          <button onClick={() => navigate('/humedadtierra')}>Humedad Tierra</button>
           <button onClick={() => alert('Botón 2 presionado')}>Botón 2</button>
           <button onClick={() => alert('Botón 3 presionado')}>Botón 3</button>
           <button onClick={() => alert('Botón 4 presionado')}>Botón 4</button>
