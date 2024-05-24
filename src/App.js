@@ -4,6 +4,7 @@ import './css/Style.css';
 import HumedadChart from './components/HumedadChart';
 import TemperaturaChart from './components/TemperaturaChart';
 import HumedadTierra from './components/HumedadTierraChart'; 
+import DataView from './components/TableDataView'; 
 
 function App() {
   const [data, setData] = useState({ humedad: [], mediana: [], timestamp: [], ultimas_temperaturas: [] });
@@ -45,24 +46,24 @@ function App() {
   };
 
   useEffect(() => {
-        // Lee los datos almacenados en localStorage al cargar la aplicación
-        const storedData = JSON.parse(localStorage.getItem('data')) || {
-          humedad: [],
-          mediana: [],
-          timestamp: [],
-          ultimas_temperaturas: [],
-        };
-        setData(storedData);
-        //Realiza la primera conexión a la API para obtener los datos de temperatura.
-        fetchData();
+    // Lee los datos almacenados en localStorage al cargar la aplicación
+    const storedData = JSON.parse(localStorage.getItem('data')) || {
+      humedad: [],
+      mediana: [],
+      timestamp: [],
+      ultimas_temperaturas: [],
+    };
+    setData(storedData);
+    //Realiza la primera conexión a la API para obtener los datos de temperatura.
+    fetchData();
 
-        //Configura un intervalo para realizar la solicitud cada minuto
-        const interval = setInterval(() => {
-          fetchData();
-        }, 60000); // 60000 milisegundos = 1 minuto
+    //Configura un intervalo para realizar la solicitud cada minuto
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000); // 60000 milisegundos = 1 minuto
 
-        return () => clearInterval(interval);
-      }, []);
+    return () => clearInterval(interval);
+  }, []);
 
   const navigate = useNavigate();
 
@@ -72,7 +73,7 @@ function App() {
         <h1>Jardinería</h1>
         <div className="button-container">
           <button onClick={() => navigate('/humedadtierra')}>Humedad Tierra</button>
-          <button onClick={() => alert('Botón 2 presionado')}>Botón 2</button>
+          <button onClick={() => navigate('/DataView', { state: { data } })}>Tabla De datos</button>
           <button onClick={() => alert('Botón 3 presionado')}>Botón 3</button>
           <button onClick={() => alert('Botón 4 presionado')}>Botón 4</button>
         </div>
@@ -104,12 +105,10 @@ function AppWrapper() {
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/humedadtierra" element={<HumedadTierra />} />
+        <Route path="/DataView" element={<DataView />} />
       </Routes>
     </Router>
   );
 }
 
 export default AppWrapper;
-
-
-//IP servidor 192.168.140.170:5000 , es una API y el código de la API
